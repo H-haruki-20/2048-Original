@@ -604,3 +604,29 @@ elem.addEventListener("click", (e) => {
     elem.textContent = "AUTO";
   }
 });
+
+const now = new Date();
+// 5min後の時間を取得する．
+const over_unix = now.getTime() + 10000;
+var over = new Date(over_unix);
+console.log(now)
+console.log(over)
+
+function countDown(){
+    const current = new Date();
+    const differ=over.getTime()-current.getTime();//あと何秒か計算
+
+
+    const sec=Math.floor(differ/1000)%60;//ミリ秒を秒に直してから
+    const min=Math.floor(differ/1000/60)%60;//1時間=60分だからね
+
+    //制限時間が経ったら，自動的にanswer.htmlの画面を表示させる．
+    if(min === 0 && sec === 0){
+        window.location.href = "./score.html"
+        return;
+    }
+    document.getElementById("min").textContent=String(min).padStart(2,"0")
+    document.getElementById("sec").textContent=String(sec).padStart(2,"0")
+    setTimeout(countDown,1000);//1秒毎に繰り返す
+}
+countDown();

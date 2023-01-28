@@ -3,15 +3,21 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="style.css" type="text/css">
-    <title>タイトル</title>
+    <title>Playing 2048</title>
 </head>
 <body>
+  <p class="untill">ゲーム終了まで</p>
+  <p class="timer">あと
+      <span id="min"></span>分
+      <span id="sec"></span>秒
+  </p>
   <div class="centering">
     <div id="gameBoard" class="flex-container">
     </div>
   </div>
   <div class="centering">
     <button id="autoButton" class="autoButton">AUTO</button>
+    <input type="button" value="start" onclick="startInterval();">
   </div>
   <script type="text/javascript" src="main.js"></script>
 </body>
