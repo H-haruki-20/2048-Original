@@ -7,6 +7,12 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <h1>Your score is</h1>
+    <h2 id="score"></h2>
 </body>
+<script>
+    let myScore = localStorage.getItem('score');
+    let score = document.getElementById("score");
+    score.innerHTML = myScore;
+</script>
 </html>

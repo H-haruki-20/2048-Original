@@ -30,7 +30,7 @@ class State {
           this.board.push(0);
           this.merge.push(false);
         }
-        this.score = 0;
+        this.scores = [];
     }
     // 指示された方向に動いた際の次の State を求める
     calcNextState(dir) {
@@ -148,6 +148,7 @@ class State {
               --cy;
             } else if (num === this.board[cy*4+x] && !this.merge[cy*4+x] && !this.merge[(cy-1)*4+x]) {
               // 上と同じ数なら合体させる
+              this.scores.push(2*num);
               this.board[(cy-1)*4+x] = 2*num;
               this.board[cy*4+x] = 0;
               this.merge[(cy-1)*4+x] = true;
@@ -172,6 +173,7 @@ class Game {
     this.screen = document.getElementById("gameBoard");
     this.animation = new Animation(this.screen);
     this.state = new State();
+    this.score = 0;
     // 初期状態として 2 つ cell を入れておく
     for (let i = 0; i < 2; i++) {
       const empty = this.state.getEmptyCells();
@@ -186,6 +188,12 @@ class Game {
   move(dir) {
     if (this.state.isDie()) return;
     if (!this.animation.finish) return;
+    console.log(this.state);
+    for(let i=0;i<this.state.scores.length;i++){
+      this.score += this.state.scores[i];
+      this.state.scores[i] = 0;
+    }
+    console.log(this.score);
     let nextState = this.state.calcNextState(dir);
     // いずれかのセルが動いたならば
     if (nextState.moveCells.length > 0) {
@@ -194,7 +202,7 @@ class Game {
       const num = (Math.random() < 0.9 ? 2 : 4);
       const index = empty[Math.floor(Math.random() * empty.length)];
       const y = Math.floor(index/4), x = index%4;
-
+      // console.log(this.score);
       // なんやかんや
       nextState.rewriteCells(y, x, num);
 
@@ -204,6 +212,7 @@ class Game {
       // state を更新
       this.state = nextState;
     }
+    return this.score;
   }
 }
 
@@ -568,18 +577,22 @@ class GameAI {
 }
 
 const game = new Game();
-
+var score = 0;
 // key 入力
 document.addEventListener("keydown", (e) => {
   global.keys[e.keyCode] = true;
   if (global.keys[38]) { // up
-    game.move(0);
+    score = game.move(0);
+    WriteScore();
   } else if (global.keys[39]) { // right
-    game.move(1);
+    score = game.move(1);
+    WriteScore();
   } else if (global.keys[40]) { // down
-    game.move(2);
+    score = game.move(2);
+    WriteScore();
   } else if (global.keys[37]) { // left
-    game.move(3);
+    score = game.move(3);
+    WriteScore();
   } else {
     return;
   }
@@ -588,23 +601,31 @@ document.addEventListener("keyup", (e) => {
   global.keys[e.keyCode] = false;
 });
 
-const elem = document.getElementById("autoButton");
-elem.addEventListener("click", (e) => {
-  if (elem.textContent === "AUTO") {
-    elem.textContent = "STOP";
-    const ai = new GameAI();
-    const dir = ai.nextMove(game.state);
-    const update = () => {
-      const dir = ai.nextMove(game.state);
-      game.move(dir);
-      if (elem.textContent === "STOP") setTimeout(update, 300);
-    };
-    setTimeout(update, 100);
-  } else {
-    elem.textContent = "AUTO";
-  }
-});
+// const elem = document.getElementById("autoButton");
+// elem.addEventListener("click", (e) => {
+//   if (elem.textContent === "AUTO") {
+//     elem.textContent = "STOP";
+//     const ai = new GameAI();
+//     const dir = ai.nextMove(game.state);
+//     const update = () => {
+//       const dir = ai.nextMove(game.state);
+//       game.move(dir);
+//       if (elem.textContent === "STOP") setTimeout(update, 300);
+//     };
+//     setTimeout(update, 100);
+//   } else {
+//     elem.textContent = "AUTO";
+//   }
+// });
 
+//スコア機能
+function WriteScore(){
+  document.getElementById("score").textContent = String(score);
+  localStorage.setItem("score",score);
+}
+WriteScore();
+
+//タイマー機能
 const now = new Date();
 // 5min後の時間を取得する．
 const over_unix = now.getTime() + 10000;

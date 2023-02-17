@@ -6,7 +6,11 @@
     <title>Playing 2048</title>
 </head>
 <body>
-  <p class="untill">ゲーム終了まで</p>
+  <p class="score">得点</p>
+  <p class="score-board">
+    <div id="score"></div>点
+  </p>
+  <p class="until">ゲーム終了まで</p>
   <p class="timer">あと
       <span id="min"></span>分
       <span id="sec"></span>秒
@@ -17,7 +21,6 @@
   </div>
   <div class="centering">
     <button id="autoButton" class="autoButton">AUTO</button>
-    <input type="button" value="start" onclick="startInterval();">
   </div>
   <script type="text/javascript" src="main.js"></script>
 </body>
